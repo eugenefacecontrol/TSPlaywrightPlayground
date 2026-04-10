@@ -135,23 +135,34 @@ const lessons: Lesson[] = [
   },
 ]
 
-const storageKey = 'ts-playwright-playground-progress'
+const progressStorageKey = 'ts-playwright-playground-progress'
+const draftStorageKey = 'ts-playwright-playground-drafts'
 
 function App() {
   const [selectedLessonId, setSelectedLessonId] = useState(lessons[0].id)
   const [completed, setCompleted] = useState<string[]>([])
   const [showAnswer, setShowAnswer] = useState<Record<string, boolean>>({})
+  const [drafts, setDrafts] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey)
-    if (saved) {
-      setCompleted(JSON.parse(saved) as string[])
+    const savedProgress = localStorage.getItem(progressStorageKey)
+    if (savedProgress) {
+      setCompleted(JSON.parse(savedProgress) as string[])
+    }
+
+    const savedDrafts = localStorage.getItem(draftStorageKey)
+    if (savedDrafts) {
+      setDrafts(JSON.parse(savedDrafts) as Record<string, string>)
     }
   }, [])
 
   useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(completed))
+    localStorage.setItem(progressStorageKey, JSON.stringify(completed))
   }, [completed])
+
+  useEffect(() => {
+    localStorage.setItem(draftStorageKey, JSON.stringify(drafts))
+  }, [drafts])
 
   const selectedLesson = useMemo(
     () => lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0],
@@ -173,6 +184,28 @@ function App() {
       ...current,
       [lessonId]: !current[lessonId],
     }))
+  }
+
+  const updateDraft = (lessonId: string, value: string) => {
+    setDrafts((current) => ({
+      ...current,
+      [lessonId]: value,
+    }))
+  }
+
+  const clearDraft = (lessonId: string) => {
+    setDrafts((current) => ({
+      ...current,
+      [lessonId]: '',
+    }))
+  }
+
+  const copyTemplate = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch {
+      // ignore clipboard failures on restrictive mobile browsers
+    }
   }
 
   return (
@@ -290,12 +323,35 @@ function App() {
         {selectedLesson.practice ? (
           <div className="block">
             <h3>Твоя очередь</h3>
+            <p className="muted practice-hint">
+              Печатай прямо здесь. Черновик сохраняется на этом устройстве автоматически.
+            </p>
             <pre>
               <code>{selectedLesson.practice}</code>
             </pre>
-            <button className="secondary-button" onClick={() => toggleAnswer(selectedLesson.id)}>
-              {showAnswer[selectedLesson.id] ? 'Скрыть ответ' : 'Показать ответ'}
-            </button>
+            <textarea
+              className="practice-editor"
+              value={drafts[selectedLesson.id] ?? selectedLesson.practice}
+              onChange={(event) => updateDraft(selectedLesson.id, event.target.value)}
+              spellCheck={false}
+              autoCapitalize="off"
+              autoCorrect="off"
+              placeholder="Впиши свой код здесь..."
+            />
+            <div className="practice-actions">
+              <button className="secondary-button" onClick={() => toggleAnswer(selectedLesson.id)}>
+                {showAnswer[selectedLesson.id] ? 'Скрыть ответ' : 'Показать ответ'}
+              </button>
+              <button
+                className="secondary-button"
+                onClick={() => copyTemplate(selectedLesson.practice ?? '')}
+              >
+                Скопировать шаблон
+              </button>
+              <button className="secondary-button danger" onClick={() => clearDraft(selectedLesson.id)}>
+                Очистить
+              </button>
+            </div>
           </div>
         ) : null}
 
