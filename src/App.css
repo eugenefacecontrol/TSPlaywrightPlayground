@@ -1,0 +1,299 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #e5e7eb;
+  background: #0b1020;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top, rgba(96, 165, 250, 0.18), transparent 28%),
+    linear-gradient(180deg, #0b1020 0%, #0f172a 100%);
+}
+
+button {
+  font: inherit;
+}
+
+#root {
+  width: 100%;
+}
+
+.app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px 14px 48px;
+}
+
+.card,
+.hero-card {
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 22px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.hero-card {
+  padding: 22px 18px;
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #93c5fd;
+}
+
+h1,
+h2,
+h3,
+p,
+ol,
+ul {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 10px;
+  font-size: clamp(2rem, 7vw, 3.6rem);
+  line-height: 1.02;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+}
+
+h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.hero-text,
+.muted,
+.lesson-tile p,
+.callout p,
+li {
+  color: #cbd5e1;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.stat-box {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #93c5fd;
+  margin-bottom: 4px;
+}
+
+.progress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(51, 65, 85, 0.8);
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  border-radius: 999px;
+}
+
+.card {
+  padding: 18px 16px;
+  margin-bottom: 16px;
+}
+
+.quick-start ol {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.pill,
+.category,
+.done-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+}
+
+.pill {
+  background: rgba(56, 189, 248, 0.16);
+  color: #bae6fd;
+}
+
+.lesson-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.lesson-tile {
+  width: 100%;
+  text-align: left;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(30, 41, 59, 0.72);
+  color: #f8fafc;
+}
+
+.lesson-tile.active {
+  border-color: rgba(96, 165, 250, 0.72);
+  background: rgba(30, 41, 59, 0.96);
+  transform: translateY(-1px);
+}
+
+.lesson-tile-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.category.core {
+  background: rgba(59, 130, 246, 0.15);
+  color: #bfdbfe;
+}
+
+.category.playwright {
+  background: rgba(16, 185, 129, 0.15);
+  color: #bbf7d0;
+}
+
+.category.practice {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fde68a;
+}
+
+.done-badge {
+  background: rgba(148, 163, 184, 0.14);
+  color: #cbd5e1;
+}
+
+.done-badge.done {
+  background: rgba(34, 197, 94, 0.16);
+  color: #bbf7d0;
+}
+
+.mark-button,
+.secondary-button {
+  border: 0;
+  border-radius: 14px;
+  padding: 11px 14px;
+  cursor: pointer;
+}
+
+.mark-button {
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  color: #08111f;
+  font-weight: 700;
+  min-width: 170px;
+}
+
+.mark-button.marked {
+  background: rgba(34, 197, 94, 0.18);
+  color: #bbf7d0;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.secondary-button {
+  background: rgba(148, 163, 184, 0.14);
+  color: #f8fafc;
+}
+
+.callout,
+.block {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(15, 23, 42, 0.66);
+}
+
+.callout.compare {
+  background: rgba(37, 99, 235, 0.12);
+}
+
+.callout.bullets {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.callout ul {
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+
+pre {
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.93rem;
+  color: #e2e8f0;
+}
+
+.answer-block {
+  border-color: rgba(56, 189, 248, 0.36);
+}
+
+.cheatsheet-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 720px) {
+  .app-shell {
+    padding: 24px 20px 60px;
+  }
+
+  .lesson-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cheatsheet-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
