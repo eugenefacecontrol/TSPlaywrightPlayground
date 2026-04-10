@@ -138,6 +138,42 @@ const lessons: Lesson[] = [
 const progressStorageKey = 'ts-playwright-playground-progress'
 const draftStorageKey = 'ts-playwright-playground-drafts'
 
+function normalizeCode(value: string): string[] {
+  return value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+}
+
+function getComparison(userInput: string, expectedAnswer: string) {
+  const actualLines = normalizeCode(userInput)
+  const expectedLines = normalizeCode(expectedAnswer)
+  const maxLength = Math.max(actualLines.length, expectedLines.length)
+
+  const rows = Array.from({ length: maxLength }, (_, index) => {
+    const actual = actualLines[index] ?? ''
+    const expected = expectedLines[index] ?? ''
+    const matches = actual === expected && actual !== ''
+
+    return {
+      index,
+      actual,
+      expected,
+      matches,
+    }
+  })
+
+  const matchedCount = rows.filter((row) => row.matches).length
+  const score = expectedLines.length === 0 ? 0 : Math.round((matchedCount / expectedLines.length) * 100)
+
+  return {
+    rows,
+    score,
+    matchedCount,
+    total: expectedLines.length,
+  }
+}
+
 function App() {
   const [selectedLessonId, setSelectedLessonId] = useState(lessons[0].id)
   const [completed, setCompleted] = useState<string[]>([])
@@ -168,6 +204,14 @@ function App() {
     () => lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0],
     [selectedLessonId],
   )
+
+  const comparison = useMemo(() => {
+    if (!selectedLesson.answer || !selectedLesson.practice) {
+      return null
+    }
+
+    return getComparison(drafts[selectedLesson.id] ?? selectedLesson.practice, selectedLesson.answer)
+  }, [drafts, selectedLesson])
 
   const progress = Math.round((completed.length / lessons.length) * 100)
 
@@ -351,6 +395,32 @@ function App() {
               <button className="secondary-button danger" onClick={() => clearDraft(selectedLesson.id)}>
                 Очистить
               </button>
+            </div>
+          </div>
+        ) : null}
+
+        {comparison ? (
+          <div className="block compare-block">
+            <div className="compare-head">
+              <h3>Насколько совпадает</h3>
+              <span className="score-pill">{comparison.score}%</span>
+            </div>
+            <p className="muted compare-summary">
+              Совпало строк: {comparison.matchedCount} из {comparison.total}
+            </p>
+            <div className="compare-grid">
+              {comparison.rows.map((row) => (
+                <div key={`${row.index}-${row.actual}-${row.expected}`} className="compare-row">
+                  <div className={`compare-cell ${row.matches ? 'match' : 'miss'}`}>
+                    <span className="compare-label">Твой ответ</span>
+                    <code>{row.actual || '—'}</code>
+                  </div>
+                  <div className={`compare-cell ${row.matches ? 'match' : 'expected'}`}>
+                    <span className="compare-label">Ожидалось</span>
+                    <code>{row.expected || '—'}</code>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         ) : null}
