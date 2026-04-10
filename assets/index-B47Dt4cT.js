@@ -17,44 +17,58 @@ const headless: boolean = true;`},{id:`unions`,title:`02. Union + literal types`
 
 type Status = 'passed' | 'failed' | 'skipped';
 const status: Status = 'passed';`,practice:`type BrowserName = _____;
-const browser: BrowserName = 'chromium';`,answer:`type BrowserName = 'chromium' | 'firefox' | 'webkit';`},{id:`objects`,title:`03. Objects, optional, readonly`,minutes:`6 мин`,category:`core`,summary:`type/interface, optional поля, readonly и структурная типизация.`,compare:`TS смотрит на форму объекта, а не только на имя класса. Это очень отличается от более номинального мышления из Java.`,example:`type LoginData = {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
-};
-
-type TestCase = {
-  readonly id: string;
-  title: string;
-};`,practice:`type TestUser = {
-  id: number;
-  email: string;
-  role?: _____;
-};`,answer:`type TestUser = {
-  id: number;
+const browser: BrowserName = 'chromium';`,answer:`type BrowserName = 'chromium' | 'firefox' | 'webkit';`},{id:`objects`,title:`03. Objects, optional, readonly`,minutes:`7 мин`,category:`core`,summary:`Как описывать форму объектов в TS: type/interface, optional поля, readonly и почему TS смотрит именно на shape объекта.`,compare:`В TS важнее форма объекта, чем имя класса. Если объект подходит по полям и их типам, TS обычно считает его совместимым.`,example:`type TestUser = {
+  readonly id: number;
   email: string;
   role?: 'admin' | 'manager' | 'viewer';
-};`},{id:`functions`,title:`04. Functions и callbacks`,minutes:`5 мин`,category:`core`,summary:`Аргументы, return types, optional params, rest, callbacks.`,example:`function formatResult(title: string, passed: boolean): string {
+};
+
+const user: TestUser = {
+  id: 1,
+  email: 'qa@example.com',
+};`,practice:`type TestUser = {
+  readonly id: number;
+  email: string;
+  role?: 'admin' | 'manager' | 'viewer';
+};
+
+const user: TestUser = {
+  id: 1,
+  email: 'qa@example.com',
+};
+
+// допиши объект ниже так, чтобы:
+// 1) id был number
+// 2) email был string
+// 3) role был optional и мог быть 'admin'
+
+const adminUser: TestUser = {
+  _____
+};`,answer:`const adminUser: TestUser = {
+  id: 2,
+  email: 'admin@example.com',
+  role: 'admin',
+};`,bullets:[`type и interface часто используются похоже`,`поле с ? можно не передавать`,`readonly нельзя переназначать после создания`,`TS проверяет форму объекта, а не только происхождение`]},{id:`functions`,title:`04. Functions и callbacks`,minutes:`6 мин`,category:`core`,summary:`Аргументы, return types и callback-функции — это база для helper methods и Playwright utility-кода.`,example:`function formatResult(title: string, passed: boolean): string {
   return passed ? \`\${title}: OK\` : \`\${title}: FAIL\`;
 }
 
-const log = (message: string): void => {
-  console.log(message);
-};`,practice:`function withScreenshot(action: _____): void {
+function withScreenshot(action: () => void): void {
   action();
-}`,answer:`function withScreenshot(action: () => void): void {
+}`,practice:`function runStep(stepName: string, action: _____): void {
+  console.log(stepName);
   action();
-}`},{id:`generics`,title:`05. Generics без боли`,minutes:`7 мин`,category:`core`,summary:`Как не скатиться в any и сохранить тип при reusable helper functions.`,compare:`Если в C#/Java generic выглядит знакомо, то в TS он часто используется для helper functions, API wrappers и test data.`,example:`function firstItem<T>(items: T[]): T | undefined {
+}`,answer:`function runStep(stepName: string, action: () => void): void {
+  console.log(stepName);
+  action();
+}`},{id:`generics`,title:`05. Generics без боли`,minutes:`7 мин`,category:`core`,summary:`Generic помогает писать переиспользуемый код без потери информации о типе.`,compare:`Если в C#/Java generic выглядит знакомо, то в TS он часто встречается в helper functions, API wrappers и test data builders.`,example:`function firstItem<T>(items: T[]): T | undefined {
   return items[0];
 }
 
-type ApiResponse<T> = {
-  data: T;
-  success: boolean;
-};`,practice:`function identity<_____>(value: _____): _____ {
-  return value;
-}`,answer:`function identity<T>(value: T): T {
-  return value;
+const firstTag = firstItem(['smoke', 'api']);
+// firstTag: string | undefined`,practice:`function wrapInArray<_____>(value: _____): _____[] {
+  return [value];
+}`,answer:`function wrapInArray<T>(value: T): T[] {
+  return [value];
 }`},{id:`narrowing`,title:`06. unknown, narrowing, guards`,minutes:`7 мин`,category:`core`,summary:`Ключевой практический блок для API, JSON и внешних данных.`,compare:"`unknown` почти всегда лучше `any`, если данные пришли извне. Сначала проверяешь, потом используешь.",example:`function printValue(value: string | number) {
   if (typeof value === 'string') {
     console.log(value.toUpperCase());
@@ -69,15 +83,17 @@ type ApiResponse<T> = {
   if (typeof data === 'string') {
     console.log(data.trim());
   }
-}`},{id:`utility-types`,title:`07. Utility types`,minutes:`5 мин`,category:`core`,summary:`Partial, Pick, Omit, Record — суперполезная повседневная штука.`,example:`type User = {
+}`},{id:`utility-types`,title:`07. Utility types`,minutes:`6 мин`,category:`core`,summary:`Partial, Pick, Omit, Record — готовые инструменты, чтобы не копипастить типы.`,example:`type User = {
   id: number;
   email: string;
   role: string;
 };
 
 type CreateUser = Omit<User, 'id'>;
-type UserPatch = Partial<User>;`,practice:`type Browser = 'chromium' | 'firefox' | 'webkit';
+type UserPatch = Partial<User>;
+type UserPreview = Pick<User, 'email' | 'role'>;`,practice:`type Browser = 'chromium' | 'firefox' | 'webkit';
 
+// хотим хранить timeout для каждого браузера
 const timeouts: _____ = {
   chromium: 3000,
   firefox: 5000,
@@ -86,20 +102,21 @@ const timeouts: _____ = {
   chromium: 3000,
   firefox: 5000,
   webkit: 4000,
-};`},{id:`playwright-basics`,title:`10. Playwright basics`,minutes:`8 мин`,category:`playwright`,summary:`Page, Locator, typed helper functions, typed test data.`,example:`import { test, expect, Page, Locator } from '@playwright/test';
+};`},{id:`playwright-basics`,title:`10. Playwright basics`,minutes:`8 мин`,category:`playwright`,summary:`Page, Locator, typed helper functions и typed test data — это основа TS в Playwright.`,example:`import { test, expect, Page, Locator } from '@playwright/test';
 
-test('login button is visible', async ({ page }) => {
-  await page.goto('https://example.com');
-  await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
-});
+async function openLoginPage(page: Page): Promise<void> {
+  await page.goto('https://example.com/login');
+}
 
 function getSubmitButton(page: Page): Locator {
   return page.getByTestId('submit-button');
-}`,practice:`async function openHomePage(page: _____): Promise<void> {
+}`,practice:`import { Page } from '@playwright/test';
+
+async function openHomePage(page: _____): Promise<void> {
   await page.goto('https://example.com');
 }`,answer:`async function openHomePage(page: Page): Promise<void> {
   await page.goto('https://example.com');
-}`,bullets:[`Page — вкладка браузера`,`Locator — ленивый объект поиска элементов`,`helper functions лучше типизировать явно`]},{id:`playwright-advanced`,title:`11. Playwright advanced`,minutes:`9 мин`,category:`playwright`,summary:`Page objects, typed fixtures, payload types, API helpers.`,example:`import { Locator, Page } from '@playwright/test';
+}`,bullets:[`Page — вкладка браузера`,`Locator — объект для поиска элементов`,`helper functions лучше типизировать явно`]},{id:`playwright-advanced`,title:`11. Playwright advanced`,minutes:`9 мин`,category:`playwright`,summary:`Page objects, typed fixtures, payload types, API helpers.`,example:`import { Locator, Page } from '@playwright/test';
 
 export class LoginPage {
   readonly emailInput: Locator;
